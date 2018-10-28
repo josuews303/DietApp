@@ -91,7 +91,7 @@ class LoginScreen extends React.Component {
   }
   class RegisterScreen extends React.Component {
     static navigationOptions = {
-      title:'Register User'
+      header: null
   }
   constructor(props){
     super(props);

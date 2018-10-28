@@ -2,6 +2,27 @@ import React from 'react';
 import { TouchableOpacity,ActivityIndicator,ListView,Alert,Button,StyleSheet, Text, View,AppRegistry,TextInput } from 'react-native';
 import { createStackNavigator} from 'react-navigation';
 import DatePicker from 'react-native-datepicker'
+import Login from '../../App.js';
+
+class LoginUser extends React.Component {
+  static navigationOptions = {
+    header: null
+}
+constructor(props){
+  super(props);
+  this.state = {
+      Input_username:'',
+      Input_password:'',
+  }
+}
+
+  render() {
+  return (
+    <Login/>
+  );
+  }
+
+}
 //Insert
 class InputUsers extends React.Component{
   static navigationOptions={
@@ -15,6 +36,7 @@ class InputUsers extends React.Component{
             InputMail:'',
             InputNick:'',
             InputPass:'',
+            InputPass2:'',
             isLoading: true,
             mailvalidate:false,
             date:"1997-06-10"
@@ -24,35 +46,40 @@ class InputUsers extends React.Component{
     InsertDataToServer = () =>{
       
       if(this.state.mailvalidate==true){
-        const {InputNombre} =this.state;
-        const {InputApellido} =this.state;
-        const {InputMail} =this.state;
-        const {date} =this.state;
-        const {InputNick} =this.state;
-        const {InputPass} =this.state;
-
-      
-        fetch('http://weaweawea.atwebpages.com/insertUser.php',{
-          method: 'POST',
-          headers:{
-            'Accept':'application/json',
-            'Content-Type':'application/json'
-          },
-          body:JSON.stringify({
-            nombre_usuario:InputNombre,
-            apellido_usuario:InputApellido,
-            mail_usuario: InputMail,
-            fechaNacimiento_usuario:date,
-            nick_usuario:InputNick,
-            pass_usuario:InputPass
-          })
-        }).then((response)=>response.json())
-        .then((responseJson)=>{
-          Alert.alert(responseJson);
-          this.props.navigation.navigate('Second');
-        }).catch((error)=>{
-          console.error(error);
-        });
+        if(this.state.InputPass==this.state.InputPass2){
+          const {InputNombre} =this.state;
+          const {InputApellido} =this.state;
+          const {InputMail} =this.state;
+          const {date} =this.state;
+          const {InputNick} =this.state;
+          const {InputPass} =this.state;
+  
+        
+          fetch('http://weaweawea.atwebpages.com/insertUser.php',{
+            method: 'POST',
+            headers:{
+              'Accept':'application/json',
+              'Content-Type':'application/json'
+            },
+            body:JSON.stringify({
+              nombre_usuario:InputNombre,
+              apellido_usuario:InputApellido,
+              mail_usuario: InputMail,
+              fechaNacimiento_usuario:date,
+              nick_usuario:InputNick,
+              pass_usuario:InputPass
+            })
+          }).then((response)=>response.json())
+          .then((responseJson)=>{
+            Alert.alert(responseJson);
+            this.props.navigation.navigate('Second');
+          }).catch((error)=>{
+            console.error(error);
+          });
+        }else{
+          Alert.alert('Error','Las contraseñas no coinciden');
+        }
+        
       }else{
         Alert.alert('Error','Asegurese de ingresar bien los datos');
       }
@@ -110,6 +137,12 @@ class InputUsers extends React.Component{
         onChangeText={InputPass => this.setState({InputPass})} 
         underlineColorAndroid='transparent'
         style={styles.TextInputStyle}/>
+        <TextInput 
+        secureTextEntry={true}
+        placeholder="Confirm Password"
+        onChangeText={InputPass2 => this.setState({InputPass2})} 
+        underlineColorAndroid='transparent'
+        style={styles.TextInputStyle}/>
         <DatePicker
           style={styles.DatePicker}
           date={this.state.date}
@@ -132,7 +165,8 @@ class InputUsers extends React.Component{
 }
 
 export default App=createStackNavigator({
-  First:{screen:InputUsers}
+  First:{screen:InputUsers},
+  Second:{screen:LoginUser}
   //<Button title='GUARDAR' onPress={this.InsertDataToServer} color='#2196F3'/>
         
 });
