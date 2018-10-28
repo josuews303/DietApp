@@ -13,13 +13,11 @@ class InputUsers extends React.Component{
             InputNombre:'',
             InputApellido:'',
             InputMail:'',
-            InputCedula:'',
-            InputDireccion:'',
-            InputTelefono:'',
             InputNick:'',
             InputPass:'',
             isLoading: true,
-            mailvalidate:false
+            mailvalidate:false,
+            date:"1997-06-10"
         }
     }
 
@@ -29,14 +27,12 @@ class InputUsers extends React.Component{
         const {InputNombre} =this.state;
         const {InputApellido} =this.state;
         const {InputMail} =this.state;
-        const {InputCedula} =this.state;
-        const {InputDireccion} =this.state;
-        const {InputTelefono} =this.state;
+        const {date} =this.state;
         const {InputNick} =this.state;
         const {InputPass} =this.state;
 
       
-        fetch('http://weaweawea.atwebpages.com/insert.php',{
+        fetch('http://weaweawea.atwebpages.com/insertUser.php',{
           method: 'POST',
           headers:{
             'Accept':'application/json',
@@ -46,9 +42,7 @@ class InputUsers extends React.Component{
             nombre_usuario:InputNombre,
             apellido_usuario:InputApellido,
             mail_usuario: InputMail,
-            cedula_usuario:InputCedula,
-            direccion_usuario:InputDireccion,
-            telefono_usuario:InputTelefono,
+            fechaNacimiento_usuario:date,
             nick_usuario:InputNick,
             pass_usuario:InputPass
           })
@@ -96,19 +90,6 @@ class InputUsers extends React.Component{
         underlineColorAndroid='transparent'
         style={styles.TextInputStyle}/>
 
-        <TextInput 
-        placeholder="ID"
-        onChangeText={InputCedula => this.setState({InputCedula})} 
-        underlineColorAndroid='transparent'
-        style={styles.TextInputStyle}
-        keyboardType='numeric'
-        maxLength={10}/>
-
-        <TextInput 
-        placeholder="Address"
-        onChangeText={InputDireccion => this.setState({InputDireccion})} 
-        underlineColorAndroid='transparent'
-        style={styles.TextInputStyle}/>
 
         <TextInput 
         placeholder="Mail"
@@ -116,13 +97,6 @@ class InputUsers extends React.Component{
         underlineColorAndroid='transparent'
         style={styles.TextInputStyle}/>
 
-        <TextInput 
-        placeholder="Phone"
-        onChangeText={InputTelefono=> this.setState({InputTelefono})} 
-        underlineColorAndroid='transparent'
-        style={styles.TextInputStyle}
-        keyboardType='numeric'
-        maxLength={10}/>
 
         <TextInput 
         placeholder="Username"
@@ -137,17 +111,17 @@ class InputUsers extends React.Component{
         underlineColorAndroid='transparent'
         style={styles.TextInputStyle}/>
         <DatePicker
-          style={{width: 200}}
+          style={styles.DatePicker}
           date={this.state.date}
           mode="date"
           placeholder="placeholder"
           format="YYYY-MM-DD"
-          minDate="2016-05-01"
-          maxDate="2016-06-01"
+          minDate="1900-01-01"
+          maxDate="2010-12-31"
           confirmBtnText="Confirm"
           cancelBtnText="Cancel"
           
-          onDateChange={(date) => {this.setState({date: date});}}
+          onDateChange={(date) => {this.setState({date});}}
         />
         <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle} onPress={this.InsertDataToServer}>
           <Text style={styles.TextStyle}>SAVE</Text>
@@ -171,6 +145,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },DatePicker:{
+    marginBottom:7,
+    height:40,
+    width:'85%',
+    borderWidth:1,
+    borderColor:'#2196F3',
+    borderRadius:5
   },
   TextInputStyle:{
     textAlign:'center',
@@ -244,3 +225,4 @@ const styles = StyleSheet.create({
     //backgroundColor:'rgba{0,0,0,0}'
   },
 });
+//2844614_ingwebapp Adm1n5h1d0
