@@ -1,408 +1,95 @@
-import React from 'react';
-import { ActivityIndicator,ListView,AsyncStorage,Alert,TextInput,StyleSheet,TouchableOpacity,ImageBackground,Button, View, Text } from 'react-native';
-import { createStackNavigator } from 'react-navigation'; // Version can be specified in package.json
-import Register from './app/components/Register';
-import Measures from './app/components/Measures';
-import CommonDataManager from './app/components/CommonDataManager';
-  
-class LoginScreen extends React.Component {
-    static navigationOptions = {
-      header: null
-  }
-  constructor(props){
-    super(props);
-    this.state = {
-        Input_username:'',
-        Input_password:'',
+import React, {
+  AppRegistry,
+  Component,
+  StyleSheet,
+  Text,
+  Navigator,
+  TouchableOpacity,
+  TouchableHighlight,
+  ImageBackground,
+  View,
+  Alert
+} from 'react-native';
+//Defino la Navegación
+let NavigationBarRouteMapper = {
+  LeftButton: function(route, navigator, index) {
+
+    if(route.name=='Login' || route.name=='Dashboard'){
+      return null;
     }
-  }
-  
-  
-  render() {
-  return (
-    <ImageBackground source={require('./img/login.jpg')} style={styles.imageContainer}>
-        <View style={styles.container}>
-            <Text style={styles.tittle}>Easy Diet</Text>
-            <TextInput style={styles.textInput} 
-                //value = {this.state.Input_username}
-                placeholder='Username' 
-                onChangeText={(Input_username) => this.setState({Input_username})} 
-                underlineColorAndroid='transparent'/>
-  
-            <TextInput secureTextEntry={true} 
-               style={styles.textInput} 
-                //value = {this.state.Input_password}
-                placeholder='Password' 
-                onChangeText={(Input_password) => this.setState({Input_password})} 
-                underlineColorAndroid='transparent'/>
-  
-            <TouchableOpacity onPress={(this.UserLoginFunction.bind(this))} style={styles.button}>
-                <Text style={styles.buttonText}>Login</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={(this.UserRegisterFunction.bind(this))} style={styles.button}>
-                <Text style={styles.buttonText}>Register</Text>
-            </TouchableOpacity>
-        </View>
-    </ImageBackground>
-  );
-  }
-  UserRegisterFunction = () =>{
-    this.props.navigation.navigate('RegisterScreen');
-  }
- 
-  UserLoginFunction = () =>{
-  
-  const { Input_username }  = this.state ;
-  const { Input_password }  = this.state ;
-  const arrayData = [];
-  const data = {
-    id_usuario: Input_username
-  }
-  arrayData.push(data);
-  try {
-    AsyncStorage.getItem('database_form').then((value)=>{
-      if(value !== null){
-        const d = JSON.parse(value);
-        d.push(data)
-        AsyncStorage.setItem('database_form',JSON.stringify(d));
-      }else{
-        AsyncStorage.setItem('database_form',JSON.stringify(arrayData));
-      }
-    })
-  }catch(err){
-    console.log(err)
-  }
-  
-  fetch('http://weaweawea.atwebpages.com/User_Login.php', {
-  method: 'POST',
-  headers: {
-   'Accept': 'application/json',
-   'Content-Type': 'application/json',
+    return(<TouchableHighlight underlayColor='rgba(0,0,0,0)' onPress={() => {
+              if(index > 0){
+                navigator.pop();
+              }
+          }}>
+
+            <Text style={{marginTop: 10, marginLeft:20, color:'#007AFF'}}>Back</Text>
+         </TouchableHighlight>
+    )
   },
-  body: JSON.stringify({
-  
-   nick_usuario: Input_username,
-  
-   pass_usuario: Input_password
-  
-  })
-  
-  }).then((response) => response.json())
-     .then((responseJson) => {
-  
-       // If server response message same as Data Matched
-      if(responseJson === 'Data Matched')
-       {
-        Alert.alert('Your login was successful');
-           //Then open Profile activity and send user email to profile activity.
-           //this.props.navigation.navigate('Second', { Email: UserEmail });
-          
-           this.props.navigation.navigate('ViewDataMeasure');
-  
-       }
-       else{
-  
-         Alert.alert(responseJson);
-       }
-  
-     }).catch((error) => {
-       console.error(error);
-     });
-  
-  }
-  }
-  class RegisterScreen extends React.Component {
-    static navigationOptions = {
-      header: null
-  }
-  constructor(props){
-    super(props);
-    this.state = {
-        Input_username:'',
-        Input_password:'',
+  RightButton: function(route){
+    return null;
+  },
+  Title: function(route){
+    if(route.name == 'Login' || route.name == 'Dashboard'){
+      return null;
     }
-  }
+    return(
+      <Text style={{marginTop: 10, color:'#007AFF' }}>
+        {route.name}
+      </Text>
+    )
+  },
+};
   
-    render() {
-    return (
-      <Register/>
-    );
+//Importo las rutas
+const Login = require('./app/components/Login');
+const Dashboard = require('./app/components/Dashboard');
+const Register = require('./app/components/Register');
+
+//Rutas
+class MainView extends Component {
+  renderScene (route, navigator) {
+    switch (route.name) {
+       case 'Login':
+        return (
+         <Login {...route.props} navigator={navigator} route={route} />
+       );
+       case 'Dashboard':
+        return (
+          <Dashboard {...route.props} navigator={navigator} route={route}/>
+       );
+       case 'Register':
+        return (
+          <Register {...route.props} navigator={navigator} route={route}/>
+       );
     }
-  
   }
 
-  class MeasuresScreen extends React.Component {
-    static navigationOptions = {
-      header: null
+  render(){
+    return(
+
+      <Navigator style={styles.bar}
+         initialRoute={{name: 'Login'}}
+         renderScene={this.renderScene}
+         configureScene={(route) => {
+           if(route.sceneConfig){
+             return route.sceneConfig;
+           }
+           return Navigator.SceneConfigs.FloatFromRight
+         }}
+         navigationBar={
+           <Navigator.NavigationBar
+            routeMapper={NavigationBarRouteMapper}/>}
+      />
+    )
   }
-  constructor(props){
-    super(props);
-    this.state = {
-        Input_username:'',
-        Input_password:'',
-    }
-  }
-  
-    render() {
-    return (
-      <Measures/>
-    );
-    }
-  
-  }
-  class ViewDataMeasure extends React.Component{
-    static navigationOptions = {
-      title:'Your Measures'
-  }
-  
-    constructor(props){
-      super(props)
-      this.state = {
-        isLoading:true,
-        id_usuario:'wea'
-      }
-    }
-  
-    componentDidMount(){
-     
-      return fetch('http://weaweawea.atwebpages.com/viewMeasures.php', {
-          method: 'POST',
-          headers: {
-           'Accept': 'application/json',
-           'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-          
-           nick_usuario: this.state.id_usuario
-          
-          })
-          
-          })
-              .then((response)=>response.json())
-              .then((responseJson)=>{
-                let ds =  new ListView.DataSource({rowHasChanged:(r1,r2)=> r1!==r2})
-                this.setState({
-                  isLoading:false,
-                  dataSource: ds.cloneWithRows(responseJson)
-                },function(){})
-              }).catch((error)=>{
-                console.error(error);
-              })
-    }
-    reload = () => 
-  {
-      //RELOAD COMPONENT
-      this.componentDidMount();
-  };
-    Action_Click(id_medida,fecha_medida,edad_medida,peso_medida,altura_medida,imc_medida,detalle_medida,id_usuario){
-      this.props.navigation.navigate('UpdateAndDeleteMeasures',{
-          id_medida:id_medida,
-          fecha_medida:fecha_medida,
-          edad_medida:edad_medida,
-          peso_medida:peso_medida,
-          altura_medida:altura_medida,
-          imc_medida:imc_medida,
-          detalle_medida:detalle_medida,
-          id_usuario:id_usuario
-        
-      })
-      Alert.alert(fecha_medida,id_usuario);
-    }
-  
-    ListViewItemSeparator=()=>{
-      return(
-        <View
-        style = {{
-          height:.5,
-          width:'100%',
-          backgroundColor:'#2196F3'
-        }}
-        />
-      )
-    }
-    
-    render(){
-      if(this.state.isLoading){
-        return(
-          <View style={{flex:1,paddingTop:1}}>
-            <ActivityIndicator/>
-          </View>
-        )
-      }
-      return(
-        <View style={styles.ContainerDataUsers}>
-          <ListView
-            dataSource={this.state.dataSource}
-            renderSeparator={this.ListViewItemSeparator}
-            renderRow={(rowData)=>
-              <Text style={styles.rowViewContainer} onPress={this.Action_Click.bind(this,
-                  rowData.id_medida,
-                  rowData.fecha_medida,
-                  rowData.edad_medida,
-                  rowData.peso_medida,
-                  rowData.altura_medida,
-                  rowData.imc_medida,
-                  rowData.detalle_medida,
-                  rowData.id_usuario
-                )}>
-                {rowData.fecha_medida}
-              </Text>
-            }
-          />
-          <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle3} onPress={this.reload}>
-            <Text style={styles.TextStyle}>Reload List</Text>
-          </TouchableOpacity> 
-        </View>
-      )
-    }
-  }
-  class UpdateAndDeleteMeasures extends React.Component{
-    static navigationOptions={
-      title:'Update And Delete Users'
-    }
-    constructor(props){
-      super(props)
-      this.state = {
-          date:"1997-06-10",
-          edad:'',
-          InputPeso:'',
-          InputAltura:'',
-          IMC:'',
-          detalleMedida:'',
-          id_usuario:'',
-          isLoading: true,
-          mailvalidate:false
-      }
-    }
-    componentDidMount(){
-      this.setState({
-        date: this.props.navigation.state.params.fecha_medida,
-        edad: this.props.navigation.state.params.edad_medida,
-        InputPeso: this.props.navigation.state.params.peso_medida,
-        InputAltura: this.props.navigation.state.params.altura_medida,
-        IMC: this.props.navigation.state.params.imc_medida,
-        detalle_medida: this.props.navigation.state.params.detalle_medida,
-        id_usuario: this.props.navigation.state.params.id_usuario,
-      
-      })
-    }
-    UpdateUsers=()=>{
-      if(this.state.mailvalidate==false){
-        fetch('http://10.92.108.146/ProyectoApp/update.php',{
-          method: 'POST',
-          headers:{
-            'Accept':'application/json',
-            'Content-Type':'application/json'
-          },
-          body:JSON.stringify({
-            id_usuario:this.state.InputId,
-            nombre_usuario:this.state.InputNombre,
-            apellido_usuario:this.state.InputApellido,
-            mail_usuario: this.state.InputMail,
-            cedula_usuario:this.state.InputCedula,
-            direccion_usuario:this.state.InputDireccion,
-            telefono_usuario:this.state.InputTelefono,
-            nick_usuario:this.state.InputNick,
-            pass_usuario:this.state.InputPass
-          })
-        }).then((response)=>response.json())
-        .then((responseJson)=> {
-          Alert.alert(responseJson);
-          this.props.navigation.navigate('Second');
-        }).catch((error)=> {
-          console.error(error);
-        })
-        this.props.navigation.navigate('Second')
-      }else{
-        Alert.alert('Error','Asegurese de ingresar bien los datos');
-      }
-      
-    }
-    DeleteUsers=()=>{
-      fetch('http://10.92.108.146/ProyectoApp/delete.php',{
-            method: 'POST',
-            headers:{
-              'Accept':'application/json',
-              'Content-Type':'application/json'
-            },
-            body:JSON.stringify({
-              id_usuario:this.state.InputId
-            })
-          }).then((response)=>response.json())
-          .then((responseJson)=>{
-            Alert.alert(responseJson);
-            this.props.navigation.navigate('Second');
-          }).catch((error)=>{
-            console.error(error);
-          })
-          this.props.navigation.navigate('Second')
-    }
-    mailvalidate = (text) => {
-      console.log(text);
-      let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ ;
-      if(reg.test(text) === false)
-      {
-      console.log("Email is Not Correct");
-      this.setState({InputMail:text,mailvalidate:false})
-      return false;
-        }
-      else {
-        this.setState({InputMail:text,mailvalidate:true})
-        console.log("Email is Correct");
-      }
-      }
-   
-    render(){
-      return(
-        <View style={styles.Container}>
-  
-          <TextInput 
-          value= {this.state.InputPeso}
-          placeholder="Enter your Weight as kg"
-          onChangeText={InputPeso => this.setState({InputPeso})} 
-          underlineColorAndroid='transparent'
-          style={styles.TextInputStyle2}
-          keyboardType='numeric'
-          maxLength={2}/>
-  
-          <TextInput 
-          value={this.state.InputAltura}
-          placeholder="Enter your Height as cm"
-          onChangeText={InputAltura => this.setState({InputAltura})} 
-          underlineColorAndroid='transparent'
-          style={styles.TextInputStyle}
-          keyboardType='numeric'
-          maxLength={3}/>
-  
-          <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle} onPress={this.UpdateUsers}>
-            <Text style={styles.TextStyle}>UPDATE</Text>
-          </TouchableOpacity>
-          <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle2} onPress={this.DeleteUsers}>
-            <Text style={styles.TextStyle}>DELETE</Text>
-          </TouchableOpacity>
-        </View>
-      )
-    }
-  }
-  const RootStack = createStackNavigator(
-    {
-      
-      LoginScreen:LoginScreen,
-      RegisterScreen:RegisterScreen,
-      ViewDataMeasure:ViewDataMeasure,
-      UpdateAndDeleteMeasures:UpdateAndDeleteMeasures
-      
-    },
-    {
-      initialRouteName: 'LoginScreen',
-    }
-  );
-  
-  export default class App extends React.Component {
-    render() {
-      return <RootStack />;
-    }
-  }
+
+}
+
+
+
+//Estilos
   const styles = StyleSheet.create({
     wrapper: {
         flex:1,
