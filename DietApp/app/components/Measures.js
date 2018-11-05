@@ -3,7 +3,6 @@ import React from 'react';
 import { TouchableOpacity,ActivityIndicator,ListView,Alert,Button,StyleSheet, Text, View,AppRegistry,TextInput } from 'react-native';
 import { createStackNavigator} from 'react-navigation';
 import {AsyncStorage} from 'react-native';
-import CommonDataManager from '../components/CommonDataManager';
 //Insert
 class InputMeasure extends React.Component{
   static navigationOptions={

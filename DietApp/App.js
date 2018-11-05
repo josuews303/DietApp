@@ -3,7 +3,7 @@ import { ActivityIndicator,ListView,AsyncStorage,Alert,TextInput,StyleSheet,Touc
 import { createStackNavigator } from 'react-navigation'; // Version can be specified in package.json
 import Register from './app/components/Register';
 import Measures from './app/components/Measures';
-import CommonDataManager from './app/components/CommonDataManager';
+
 
 class LoginScreen extends React.Component {
     static navigationOptions = {
@@ -129,9 +129,8 @@ class LoginScreen extends React.Component {
     }
   
     componentDidMount(){
-
-
-      return fetch('http://weaweawea.atwebpages.com/viewMeasures.php', {
+      try {
+        return fetch('http://weaweawea.atwebpages.com/viewMeasures.php', {
           method: 'POST',
           headers: {
            'Accept': 'application/json',
@@ -154,6 +153,11 @@ class LoginScreen extends React.Component {
               }).catch((error)=>{
                 console.error(error);
               })
+      } catch (error) {
+          console.error(error);
+      }
+
+      
     }
     reload = () => 
   {
@@ -161,7 +165,7 @@ class LoginScreen extends React.Component {
       this.componentDidMount();
   };
   to_add = () =>{
-    this.props.navigation.navigate('InputMeasure');
+    this.props.navigation.navigate('InputMeasure',{id_usuario:this.state.id_usuario});
   }
     Action_Click(id_medida,fecha_medida,edad_medida,peso_medida,altura_medida,imc_medida,detalle_medida,id_usuario){
       this.props.navigation.navigate('UpdateAndDeleteMeasures',{
