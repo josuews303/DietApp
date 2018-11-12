@@ -3,115 +3,6 @@ import React from 'react';
 import { TouchableOpacity,ActivityIndicator,ListView,Alert,Button,StyleSheet, Text, View,AppRegistry,TextInput } from 'react-native';
 import { createStackNavigator} from 'react-navigation';
 import {AsyncStorage} from 'react-native';
-//Insert
-class InputMeasure extends React.Component{
-  static navigationOptions={
-    title:'New Measure'
-  }
-    constructor(props){
-        super(props);
-        this.state={
-            date:"1997-06-10",
-            edad:'',
-            InputPeso:'',
-            InputAltura:'',
-            IMC:'',
-            detalleMedida:'',
-            id_usuario:'',
-            isLoading: true,
-            mailvalidate:false
-        }
-    }
-
-    InsertDataToServer = () =>{
-      
-      if(this.state.mailvalidate==false){
-        const {date} =this.state;
-        const {edad} =this.state;
-        const {InputPeso} =this.state;
-        const {InputAltura} =this.state;
-        const {IMC} =this.state;
-        const {detalleMedida} =this.state;
-        const {id_usuarioG} =this.state;
-       
-
-      
-        fetch('http://10.92.108.146/ProyectoApp/insert.php',{
-          method: 'POST',
-          headers:{
-            'Accept':'application/json',
-            'Content-Type':'application/json'
-          },
-          body:JSON.stringify({
-            fecha_medida:date,
-            edad_medida:edad,
-            peso_medida: InputPeso,
-            altura_medida:InputAltura,
-            imc_medida:IMC,
-            detalle_medida:detalleMedida,
-            id_usuario:id_usuarioG
-          })
-        }).then((response)=>response.json())
-        .then((responseJson)=>{
-          Alert.alert(responseJson);
-          this.props.navigation.navigate('Second');
-        }).catch((error)=>{
-          console.error(error);
-        });
-      }else{
-        Alert.alert('Error','Asegurese de ingresar bien los datos');
-      }
-        
-    }
-  ViewMeasuresList=()=>{
-    this.props.navigation.navigate('Second');
-  }
-
-  mailvalidate = (text) => {
-    console.log(text);
-    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ ;
-    if(reg.test(text) === false)
-    {
-    console.log("Email is Not Correct");
-    this.setState({InputMail:text})
-    return false;
-      }
-    else {
-      this.setState({InputMail:text,mailvalidate:true})
-      console.log("Email is Correct");
-    }
-    }
-  render() {
-    return (
-      
-      <View style={styles.Container}>
-        <TextInput 
-        placeholder="Enter your Weight as kg"
-        onChangeText={InputPeso => this.setState({InputPeso})} 
-        underlineColorAndroid='transparent'
-        style={styles.TextInputStyle2}
-        keyboardType='numeric'
-        maxLength={2}/>
-
-        <TextInput 
-        placeholder="Enter your Height as cm"
-        onChangeText={InputAltura => this.setState({InputAltura})} 
-        underlineColorAndroid='transparent'
-        style={styles.TextInputStyle}
-        keyboardType='numeric'
-        maxLength={3}/>
-
-        
-        <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle} onPress={this.InsertDataToServer}>
-          <Text style={styles.TextStyle}>SAVE</Text>
-        </TouchableOpacity>
-        <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle} onPress={this.ViewMeasuresList}>
-          <Text style={styles.TextStyle}>SHOW MEASURES</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-}
 class ViewDataMeasure extends React.Component{
   static navigationOptions = {
     title:'Your Measures'
@@ -121,13 +12,13 @@ class ViewDataMeasure extends React.Component{
     super(props)
     this.state = {
       isLoading:true,
-      id_usuario:'wea'
+      id_usuario:this.props.navigation.state.params.id_usuario,
     }
   }
 
   componentDidMount(){
-   
-    return fetch('http://weaweawea.atwebpages.com/viewMeasures.php', {
+    try {
+      return fetch('http://weaweawea.atwebpages.com/viewMeasures.php', {
         method: 'POST',
         headers: {
          'Accept': 'application/json',
@@ -150,14 +41,22 @@ class ViewDataMeasure extends React.Component{
             }).catch((error)=>{
               console.error(error);
             })
+    } catch (error) {
+        console.error(error);
+    }
+
+    
   }
   reload = () => 
 {
     //RELOAD COMPONENT
     this.componentDidMount();
 };
+to_add = () =>{
+  this.props.navigation.navigate('InputMeasure',{id_usuario:this.state.id_usuario});
+}
   Action_Click(id_medida,fecha_medida,edad_medida,peso_medida,altura_medida,imc_medida,detalle_medida,id_usuario){
-    this.props.navigation.navigate('Thire',{
+    this.props.navigation.navigate('UpdateAndDeleteMeasures',{
         id_medida:id_medida,
         fecha_medida:fecha_medida,
         edad_medida:edad_medida,
@@ -168,7 +67,7 @@ class ViewDataMeasure extends React.Component{
         id_usuario:id_usuario
       
     })
-    Alert.alert(fecha_medida,imc_medida);
+    Alert.alert(fecha_medida,edad_medida);
   }
 
   ListViewItemSeparator=()=>{
@@ -207,10 +106,13 @@ class ViewDataMeasure extends React.Component{
                 rowData.detalle_medida,
                 rowData.id_usuario
               )}>
-              {rowData.fecha_medida}
+              {rowData.fecha_medida} {rowData.detalle_medida}
             </Text>
           }
         />
+        <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle3} onPress={this.to_add}>
+          <Text style={styles.TextStyle}>Add Measure</Text>
+        </TouchableOpacity> 
         <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle3} onPress={this.reload}>
           <Text style={styles.TextStyle}>Reload List</Text>
         </TouchableOpacity> 
@@ -220,92 +122,237 @@ class ViewDataMeasure extends React.Component{
 }
 class UpdateAndDeleteMeasures extends React.Component{
   static navigationOptions={
-    title:'Update And Delete Users'
+    title:'Update And Delete Measures'
   }
   constructor(props){
     super(props)
     this.state = {
-        date:"1997-06-10",
-        edad:'',
-        InputPeso:'',
-        InputAltura:'',
-        IMC:'',
-        detalleMedida:'',
+        id_medida:'',
+        fecha_medida:'',
+        edad_medida:'',
+        peso_medida:'',
+        altura_medida:'',
+        imc_medida:'',
+        detalle_medida:'',
         id_usuario:'',
-        isLoading: true,
-        mailvalidate:false
+        isLoading: true
     }
   }
   componentDidMount(){
     this.setState({
-      date: this.props.navigation.state.params.fecha_medida,
-      edad: this.props.navigation.state.params.edad_medida,
-      InputPeso: this.props.navigation.state.params.peso_medida,
-      InputAltura: this.props.navigation.state.params.altura_medida,
-      IMC: this.props.navigation.state.params.imc_medida,
+      id_medida: this.props.navigation.state.params.id_medida,
+      fecha_medida: this.props.navigation.state.params.fecha_medida,
+      edad_medida: this.props.navigation.state.params.edad_medida,
+      peso_medida: this.props.navigation.state.params.peso_medida,
+      altura_medida: this.props.navigation.state.params.altura_medida,
+      imc_medida: this.props.navigation.state.params.imc_medida,
       detalle_medida: this.props.navigation.state.params.detalle_medida,
       id_usuario: this.props.navigation.state.params.id_usuario,
     
     })
   }
-  UpdateUsers=()=>{
-    if(this.state.mailvalidate==false){
-      fetch('http://10.92.108.146/ProyectoApp/update.php',{
+  ////////////Update Measure/////
+  UpdateMeasure=()=>{
+      imc_cal=(this.state.peso_medida/((this.state.altura_medida/100)*(this.state.altura_medida/100)));
+       if(imc_cal< 18){
+          detalle_medida='Desnutrido';
+      }else{
+          if(imc_cal>=18 && imc_cal<25){
+              detalle_medida='Normal';
+          }else{
+              if(imc_cal >= 25 && imc_cal < 30){
+                  detalle_medida='Sobrepeso';
+              }else{
+                  if(imc_cal>=30 && imc_cal <35){
+                      detalle_medida='Obesidad Grado 1';
+                  }else{
+                      if(imc_cal >= 35 && imc_cal < 40){
+                          detalle_medida='Obesidad Grado 2';
+                      }else{
+                          detalle_medida='Obesidad Grado 3';
+                      }
+                  }
+              }
+          }
+      }
+      fetch('http://weaweawea.atwebpages.com/updateMeasure.php',{
         method: 'POST',
         headers:{
           'Accept':'application/json',
           'Content-Type':'application/json'
         },
         body:JSON.stringify({
-          id_usuario:this.state.InputId,
-          nombre_usuario:this.state.InputNombre,
-          apellido_usuario:this.state.InputApellido,
-          mail_usuario: this.state.InputMail,
-          cedula_usuario:this.state.InputCedula,
-          direccion_usuario:this.state.InputDireccion,
-          telefono_usuario:this.state.InputTelefono,
-          nick_usuario:this.state.InputNick,
-          pass_usuario:this.state.InputPass
+          id_medida:this.state.id_medida,
+          peso_medida:this.state.peso_medida,
+          altura_medida:this.state.altura_medida,
+          edad_medida:this.state.edad_medida,
+          imc_medida:imc_cal,
+          detalle_medida:detalle_medida
         })
       }).then((response)=>response.json())
       .then((responseJson)=> {
         Alert.alert(responseJson);
-        this.props.navigation.navigate('Second');
+        this.props.navigation.navigate('ViewDataMeasure',{id_usuario:this.state.id_usuario});
       }).catch((error)=> {
         console.error(error);
       })
-      this.props.navigation.navigate('Second')
-    }else{
-      Alert.alert('Error','Asegurese de ingresar bien los datos');
+      this.props.navigation.navigate('ViewDataMeasure',{id_usuario:this.state.id_usuario});
     }
-    
-  }
-  DeleteUsers=()=>{
-    fetch('http://10.92.108.146/ProyectoApp/delete.php',{
+    //////////////////Delete Measure/////////
+  DeleteMeasure=()=>{
+    fetch('http://weaweawea.atwebpages.com/deleteMeasure.php',{
           method: 'POST',
           headers:{
             'Accept':'application/json',
             'Content-Type':'application/json'
           },
           body:JSON.stringify({
-            id_usuario:this.state.InputId
+            id_medida:this.state.id_medida
           })
         }).then((response)=>response.json())
         .then((responseJson)=>{
           Alert.alert(responseJson);
-          this.props.navigation.navigate('Second');
+          this.props.navigation.navigate('ViewDataMeasure',{id_usuario:this.state.id_usuario});
         }).catch((error)=>{
           console.error(error);
         })
-        this.props.navigation.navigate('Second')
+        this.props.navigation.navigate('ViewDataMeasure',{id_usuario:this.state.id_usuario});
   }
+ 
+  render(){
+    return(
+      <View style={styles.Container}>
+
+        <TextInput 
+        value= {this.state.peso_medida}
+        placeholder="Enter your Weight as kg"
+        onChangeText={peso_medida => this.setState({peso_medida})} 
+        underlineColorAndroid='transparent'
+        style={styles.TextInputStyle2}
+        keyboardType='numeric'
+        maxLength={2}/>
+
+        <TextInput 
+        value={this.state.altura_medida}
+        placeholder="Enter your Height as cm"
+        onChangeText={altura_medida => this.setState({altura_medida})} 
+        underlineColorAndroid='transparent'
+        style={styles.TextInputStyle}
+        keyboardType='numeric'
+        maxLength={3}/>
+        <TextInput 
+        value={this.state.edad_medida}
+        placeholder="Enter your Age"
+        onChangeText={edad_medida => this.setState({edad_medida})} 
+        underlineColorAndroid='transparent'
+        style={styles.TextInputStyle}
+        keyboardType='numeric'
+        maxLength={2}/>
+
+        <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle} onPress={this.UpdateMeasure}>
+          <Text style={styles.TextStyle}>UPDATE</Text>
+        </TouchableOpacity>
+        <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle2} onPress={this.DeleteMeasure}>
+          <Text style={styles.TextStyle}>DELETE</Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+}
+class InputMeasure extends React.Component{
+  static navigationOptions={
+    title:'New Measure'
+  }
+    constructor(props){
+        super(props);
+        this.state={
+            date:"1997-06-10",
+            InputEdad:'',
+            InputPeso:'',
+            InputAltura:'',
+            IMC:'',
+            detalle_medida:'',
+            id_usuario:this.props.navigation.state.params.Input_username,
+            isLoading: true,
+            mailvalidate:false
+        }
+    }
+
+    InsertDataToServer = () =>{
+      
+      if(this.state.mailvalidate==false){
+        const {date} =this.state;
+        const {InputEdad} =this.state;
+        const {InputPeso} =this.state;
+        const {InputAltura} =this.state;
+        const {IMC} =this.state;
+        const {detalle_medida} =this.state;
+        const {id_usuario} =this.state;
+        console.log(id_usuario);
+        
+      
+      fechaActual=new Date();
+       imc_cal=(InputPeso/((InputAltura/100)*(InputAltura/100)));
+       if(imc_cal< 18){
+          detalle_medida='Desnutrido';
+      }else{
+          if(imc_cal>=18 && imc_cal<25){
+              detalle_medida='Normal';
+          }else{
+              if(imc_cal >= 25 && imc_cal < 30){
+                  detalle_medida='Sobrepeso';
+              }else{
+                  if(imc_cal>=30 && imc_cal <35){
+                      detalle_medida='Obesidad Grado 1';
+                  }else{
+                      if(imc_cal >= 35 && imc_cal < 40){
+                          detalle_medida='Obesidad Grado 2';
+                      }else{
+                          detalle_medida='Obesidad Grado 3';
+                      }
+                  }
+              }
+          }
+      }
+        fetch('http://weaweawea.atwebpages.com/insertMeasure.php',{
+          method: 'POST',
+          headers:{
+            'Accept':'application/json',
+            'Content-Type':'application/json'
+          },
+          body:JSON.stringify({
+            fecha_medida:fechaActual,
+            peso_medida: InputPeso,
+            altura_medida:InputAltura,
+            imc_medida:imc_cal,
+            id_usuario:id_usuario,
+            edad_medida:InputEdad,
+            detalle_medida:detalle_medida
+          })
+        }).then((response)=>response.json())
+        .then((responseJson)=>{
+          Alert.alert(responseJson);
+          this.props.navigation.navigate('ViewDataMeasure',{id_usuario:this.state.id_usuario});
+        }).catch((error)=>{
+          console.error(error);
+        });
+        this.props.navigation.navigate('ViewDataMeasure',{id_usuario:this.state.id_usuario});
+      }else{
+        Alert.alert('Error','Asegurese de ingresar bien los datos');
+      }
+        
+    }
+  ViewMeasuresList=()=>{
+    this.props.navigation.navigate('ViewDataMeasure',{id_usuario:this.state.id_usuario});
+  }
+
   mailvalidate = (text) => {
     console.log(text);
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ ;
     if(reg.test(text) === false)
     {
     console.log("Email is Not Correct");
-    this.setState({InputMail:text,mailvalidate:false})
+    this.setState({InputMail:text})
     return false;
       }
     else {
@@ -313,13 +360,11 @@ class UpdateAndDeleteMeasures extends React.Component{
       console.log("Email is Correct");
     }
     }
- 
-  render(){
-    return(
+  render() {
+    return (
+      
       <View style={styles.Container}>
-
         <TextInput 
-        value= {this.state.InputPeso}
         placeholder="Enter your Weight as kg"
         onChangeText={InputPeso => this.setState({InputPeso})} 
         underlineColorAndroid='transparent'
@@ -328,7 +373,6 @@ class UpdateAndDeleteMeasures extends React.Component{
         maxLength={2}/>
 
         <TextInput 
-        value={this.state.InputAltura}
         placeholder="Enter your Height as cm"
         onChangeText={InputAltura => this.setState({InputAltura})} 
         underlineColorAndroid='transparent'
@@ -336,14 +380,23 @@ class UpdateAndDeleteMeasures extends React.Component{
         keyboardType='numeric'
         maxLength={3}/>
 
-        <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle} onPress={this.UpdateUsers}>
-          <Text style={styles.TextStyle}>UPDATE</Text>
+        <TextInput 
+        placeholder="Enter your Age"
+        onChangeText={InputEdad => this.setState({InputEdad})} 
+        underlineColorAndroid='transparent'
+        style={styles.TextInputStyle}
+        keyboardType='numeric'
+        maxLength={2}/>
+
+        
+        <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle} onPress={this.InsertDataToServer}>
+          <Text style={styles.TextStyle}>SAVE</Text>
         </TouchableOpacity>
-        <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle2} onPress={this.DeleteUsers}>
-          <Text style={styles.TextStyle}>DELETE</Text>
+        <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle} onPress={this.ViewMeasuresList}>
+          <Text style={styles.TextStyle}>SHOW MEASURES</Text>
         </TouchableOpacity>
       </View>
-    )
+    );
   }
 }
 export default App=createStackNavigator({
