@@ -76,10 +76,12 @@ class InputFood extends React.Component{
         style={styles.TextInputStyle2}/>
 
         <TextInput 
-        placeholder="Food Portion"
+        placeholder="Food Portion Kg"
         onChangeText={InputPorcion => this.setState({InputPorcion})} 
         underlineColorAndroid='transparent'
-        style={styles.TextInputStyle}/>
+        style={styles.TextInputStyle}
+        keyboardType='numeric'
+        maxLength={3}/>
 
         <Picker
             placeholder="Order"
@@ -301,10 +303,12 @@ class UpdateAndDeleteFood extends React.Component{
 
         <TextInput 
         value = {this.state.InputPorcion} 
-        placeholder="Food Portion"
+        placeholder="Food Portion Kg"
         onChangeText={InputPorcion => this.setState({InputPorcion})} 
         underlineColorAndroid='transparent'
-        style={styles.TextInputStyle}/>
+        style={styles.TextInputStyle}
+        keyboardType='numeric'
+        maxLength={3}/>
 
         <Picker
             placeholder="Order"
