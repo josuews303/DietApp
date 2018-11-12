@@ -2,7 +2,7 @@ import React from 'react';
 import { ActivityIndicator,ListView,AsyncStorage,Alert,TextInput,StyleSheet,TouchableOpacity,ImageBackground,Button, View, Text } from 'react-native';
 import { createStackNavigator } from 'react-navigation'; // Version can be specified in package.json
 import Register from './app/components/Register';
-import Measures from './app/components/Measures';
+import Menu from './app/components/Menu';
 
 
 class LoginScreen extends React.Component {
@@ -78,7 +78,6 @@ class LoginScreen extends React.Component {
       if(responseJson === 'Data Matched')
        {
         Alert.alert('Your login was successful');
-           //Then open Profile activity and send user email to profile activity.
            //this.props.navigation.navigate('Second', { Email: UserEmail });
            console.log(this.state.Input_username);
            this.props.navigation.navigate('InputMeasure',{Input_username:this.state.Input_username});
@@ -120,7 +119,14 @@ class LoginScreen extends React.Component {
       
       LoginScreen:LoginScreen,
       RegisterScreen:RegisterScreen,
-      InputMeasure:Measures
+      InputMeasure:{
+        screen: Menu,
+        navigationOptions: () => ({
+          //title: `A`,
+          header: null,
+          headerBackTitle: null
+        }),
+      }
       
       
     },
@@ -130,6 +136,7 @@ class LoginScreen extends React.Component {
   );
   
   export default class App extends React.Component {
+    static navigationOptions = { header: null };
     render() {
       return <RootStack />;
     }

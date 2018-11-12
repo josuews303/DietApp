@@ -2,7 +2,7 @@
 import React from 'react';
 import { TouchableOpacity,ActivityIndicator,ListView,Alert,Button,StyleSheet, Text, View,AppRegistry,TextInput } from 'react-native';
 import { createStackNavigator} from 'react-navigation';
-import {AsyncStorage} from 'react-native';
+
 class ViewDataMeasure extends React.Component{
   static navigationOptions = {
     title:'Your Measures'
@@ -53,10 +53,10 @@ class ViewDataMeasure extends React.Component{
     this.componentDidMount();
 };
 to_add = () =>{
-  this.props.navigation.navigate('InputMeasure',{id_usuario:this.state.id_usuario});
+  this.props.navigation.navigate('First',{id_usuario:this.state.id_usuario});
 }
   Action_Click(id_medida,fecha_medida,edad_medida,peso_medida,altura_medida,imc_medida,detalle_medida,id_usuario){
-    this.props.navigation.navigate('UpdateAndDeleteMeasures',{
+    this.props.navigation.navigate('Thire',{
         id_medida:id_medida,
         fecha_medida:fecha_medida,
         edad_medida:edad_medida,
@@ -192,11 +192,11 @@ class UpdateAndDeleteMeasures extends React.Component{
       }).then((response)=>response.json())
       .then((responseJson)=> {
         Alert.alert(responseJson);
-        this.props.navigation.navigate('ViewDataMeasure',{id_usuario:this.state.id_usuario});
+        this.props.navigation.navigate('Second',{id_usuario:this.state.id_usuario});
       }).catch((error)=> {
         console.error(error);
       })
-      this.props.navigation.navigate('ViewDataMeasure',{id_usuario:this.state.id_usuario});
+      this.props.navigation.navigate('Second',{id_usuario:this.state.id_usuario});
     }
     //////////////////Delete Measure/////////
   DeleteMeasure=()=>{
@@ -212,11 +212,11 @@ class UpdateAndDeleteMeasures extends React.Component{
         }).then((response)=>response.json())
         .then((responseJson)=>{
           Alert.alert(responseJson);
-          this.props.navigation.navigate('ViewDataMeasure',{id_usuario:this.state.id_usuario});
+          this.props.navigation.navigate('Second',{id_usuario:this.state.id_usuario});
         }).catch((error)=>{
           console.error(error);
         })
-        this.props.navigation.navigate('ViewDataMeasure',{id_usuario:this.state.id_usuario});
+        this.props.navigation.navigate('Second',{id_usuario:this.state.id_usuario});
   }
  
   render(){
@@ -332,18 +332,18 @@ class InputMeasure extends React.Component{
         }).then((response)=>response.json())
         .then((responseJson)=>{
           Alert.alert(responseJson);
-          this.props.navigation.navigate('ViewDataMeasure',{id_usuario:this.state.id_usuario});
+          this.props.navigation.navigate('Second',{id_usuario:this.state.id_usuario});
         }).catch((error)=>{
           console.error(error);
         });
-        this.props.navigation.navigate('ViewDataMeasure',{id_usuario:this.state.id_usuario});
+        this.props.navigation.navigate('Second',{id_usuario:this.state.id_usuario});
       }else{
         Alert.alert('Error','Asegurese de ingresar bien los datos');
       }
         
     }
   ViewMeasuresList=()=>{
-    this.props.navigation.navigate('ViewDataMeasure',{id_usuario:this.state.id_usuario});
+    this.props.navigation.navigate('Second',{id_usuario:this.state.id_usuario});
   }
 
   mailvalidate = (text) => {
@@ -400,9 +400,8 @@ class InputMeasure extends React.Component{
   }
 }
 export default App=createStackNavigator({
-    First:{screen:ViewDataMeasure},
-    Second:{screen:InputMeasure},
-
+    First:{screen:InputMeasure},
+    Second:{screen:ViewDataMeasure},
     Thire:{screen:UpdateAndDeleteMeasures}
   //<Button title='GUARDAR' onPress={this.InsertDataToServer} color='#2196F3'/>
         
