@@ -2,7 +2,148 @@
 import React from 'react';
 import { TouchableOpacity,ActivityIndicator,ListView,Alert,Button,StyleSheet, Text, View,AppRegistry,TextInput } from 'react-native';
 import { createStackNavigator} from 'react-navigation';
+import MyDiets from "./MyDiets"
+class InputMeasure extends React.Component{
+  static navigationOptions={
+    title:'New Measure'
+  }
+    constructor(props){
+        super(props);
+        this.state={
+            date:"1997-06-10",
+            InputEdad:'',
+            InputPeso:'',
+            InputAltura:'',
+            IMC:'',
+            detalle_medida:'',
+            id_usuario:this.props.navigation.state.params.id_usuario,
+            isLoading: true,
+            mailvalidate:false
+        }
+    }
 
+    InsertDataToServer = () =>{
+      
+      if(this.state.mailvalidate==false){
+        const {date} =this.state;
+        const {InputEdad} =this.state;
+        const {InputPeso} =this.state;
+        const {InputAltura} =this.state;
+        const {IMC} =this.state;
+        const {detalle_medida} =this.state;
+        const {id_usuario} =this.state;
+        console.log(id_usuario);
+        
+      
+      fechaActual=new Date();
+       imc_cal=(InputPeso/((InputAltura/100)*(InputAltura/100)));
+       if(imc_cal< 18){
+          detalle_medida='Desnutrido';
+      }else{
+          if(imc_cal>=18 && imc_cal<25){
+              detalle_medida='Normal';
+          }else{
+              if(imc_cal >= 25 && imc_cal < 30){
+                  detalle_medida='Sobrepeso';
+              }else{
+                  if(imc_cal>=30 && imc_cal <35){
+                      detalle_medida='Obesidad Grado 1';
+                  }else{
+                      if(imc_cal >= 35 && imc_cal < 40){
+                          detalle_medida='Obesidad Grado 2';
+                      }else{
+                          detalle_medida='Obesidad Grado 3';
+                      }
+                  }
+              }
+          }
+      }
+        fetch('http://weaweawea.atwebpages.com/insertMeasure.php',{
+          method: 'POST',
+          headers:{
+            'Accept':'application/json',
+            'Content-Type':'application/json'
+          },
+          body:JSON.stringify({
+            fecha_medida:fechaActual,
+            peso_medida: InputPeso,
+            altura_medida:InputAltura,
+            imc_medida:imc_cal,
+            id_usuario:id_usuario,
+            edad_medida:InputEdad,
+            detalle_medida:detalle_medida
+          })
+        }).then((response)=>response.json())
+        .then((responseJson)=>{
+          Alert.alert(responseJson);
+          this.props.navigation.navigate('Second',{id_usuario:this.state.id_usuario});
+        }).catch((error)=>{
+          console.error(error);
+        });
+        this.props.navigation.navigate('Second',{id_usuario:this.state.id_usuario});
+      }else{
+        Alert.alert('Error','Asegurese de ingresar bien los datos');
+      }
+        
+    }
+  ViewMeasuresList=()=>{
+    console.log(this.state.id_usuario)
+    this.props.navigation.navigate('Second',{id_usuario:this.state.id_usuario});
+  }
+
+  mailvalidate = (text) => {
+    console.log(text);
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ ;
+    if(reg.test(text) === false)
+    {
+    console.log("Email is Not Correct");
+    this.setState({InputMail:text})
+    return false;
+      }
+    else {
+      this.setState({InputMail:text,mailvalidate:true})
+      console.log("Email is Correct");
+    }
+    }
+  render() {
+    return (
+      
+      <View style={styles.Container}>
+        <TextInput 
+        placeholder="Enter your Weight as kg"
+        onChangeText={InputPeso => this.setState({InputPeso})} 
+        underlineColorAndroid='transparent'
+        style={styles.TextInputStyle2}
+        keyboardType='numeric'
+        maxLength={2}/>
+
+        <TextInput 
+        placeholder="Enter your Height as cm"
+        onChangeText={InputAltura => this.setState({InputAltura})} 
+        underlineColorAndroid='transparent'
+        style={styles.TextInputStyle}
+        keyboardType='numeric'
+        maxLength={3}/>
+
+        <TextInput 
+        placeholder="Enter your Age"
+        onChangeText={InputEdad => this.setState({InputEdad})} 
+        underlineColorAndroid='transparent'
+        style={styles.TextInputStyle}
+        keyboardType='numeric'
+        maxLength={2}/>
+
+        
+        <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle} onPress={this.InsertDataToServer}>
+          <Text style={styles.TextStyle}>SAVE</Text>
+        </TouchableOpacity>
+        <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle} onPress={this.ViewMeasuresList}>
+          <Text style={styles.TextStyle}>SHOW MEASURES</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+}
 class ViewDataMeasure extends React.Component{
   static navigationOptions = {
     title:'Your Measures'
@@ -151,6 +292,9 @@ class UpdateAndDeleteMeasures extends React.Component{
     
     })
   }
+  goDiets=()=>{
+    this.props.navigation.navigate('Fourth',{grado_dieta:this.state.detalle_medida});
+  }
   ////////////Update Measure/////
   UpdateMeasure=()=>{
       imc_cal=(this.state.peso_medida/((this.state.altura_medida/100)*(this.state.altura_medida/100)));
@@ -255,154 +399,19 @@ class UpdateAndDeleteMeasures extends React.Component{
         <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle2} onPress={this.DeleteMeasure}>
           <Text style={styles.TextStyle}>DELETE</Text>
         </TouchableOpacity>
+        <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle} onPress={this.goDiets}>
+          <Text style={styles.TextStyle}>Recomended Diet</Text>
+        </TouchableOpacity>
       </View>
     )
   }
 }
-class InputMeasure extends React.Component{
-  static navigationOptions={
-    title:'New Measure'
-  }
-    constructor(props){
-        super(props);
-        this.state={
-            date:"1997-06-10",
-            InputEdad:'',
-            InputPeso:'',
-            InputAltura:'',
-            IMC:'',
-            detalle_medida:'',
-            id_usuario:this.props.navigation.state.params.Input_username,
-            isLoading: true,
-            mailvalidate:false
-        }
-    }
 
-    InsertDataToServer = () =>{
-      
-      if(this.state.mailvalidate==false){
-        const {date} =this.state;
-        const {InputEdad} =this.state;
-        const {InputPeso} =this.state;
-        const {InputAltura} =this.state;
-        const {IMC} =this.state;
-        const {detalle_medida} =this.state;
-        const {id_usuario} =this.state;
-        console.log(id_usuario);
-        
-      
-      fechaActual=new Date();
-       imc_cal=(InputPeso/((InputAltura/100)*(InputAltura/100)));
-       if(imc_cal< 18){
-          detalle_medida='Desnutrido';
-      }else{
-          if(imc_cal>=18 && imc_cal<25){
-              detalle_medida='Normal';
-          }else{
-              if(imc_cal >= 25 && imc_cal < 30){
-                  detalle_medida='Sobrepeso';
-              }else{
-                  if(imc_cal>=30 && imc_cal <35){
-                      detalle_medida='Obesidad Grado 1';
-                  }else{
-                      if(imc_cal >= 35 && imc_cal < 40){
-                          detalle_medida='Obesidad Grado 2';
-                      }else{
-                          detalle_medida='Obesidad Grado 3';
-                      }
-                  }
-              }
-          }
-      }
-        fetch('http://weaweawea.atwebpages.com/insertMeasure.php',{
-          method: 'POST',
-          headers:{
-            'Accept':'application/json',
-            'Content-Type':'application/json'
-          },
-          body:JSON.stringify({
-            fecha_medida:fechaActual,
-            peso_medida: InputPeso,
-            altura_medida:InputAltura,
-            imc_medida:imc_cal,
-            id_usuario:id_usuario,
-            edad_medida:InputEdad,
-            detalle_medida:detalle_medida
-          })
-        }).then((response)=>response.json())
-        .then((responseJson)=>{
-          Alert.alert(responseJson);
-          this.props.navigation.navigate('Second',{id_usuario:this.state.id_usuario});
-        }).catch((error)=>{
-          console.error(error);
-        });
-        this.props.navigation.navigate('Second',{id_usuario:this.state.id_usuario});
-      }else{
-        Alert.alert('Error','Asegurese de ingresar bien los datos');
-      }
-        
-    }
-  ViewMeasuresList=()=>{
-    this.props.navigation.navigate('Second',{id_usuario:this.state.id_usuario});
-  }
-
-  mailvalidate = (text) => {
-    console.log(text);
-    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ ;
-    if(reg.test(text) === false)
-    {
-    console.log("Email is Not Correct");
-    this.setState({InputMail:text})
-    return false;
-      }
-    else {
-      this.setState({InputMail:text,mailvalidate:true})
-      console.log("Email is Correct");
-    }
-    }
-  render() {
-    return (
-      
-      <View style={styles.Container}>
-        <TextInput 
-        placeholder="Enter your Weight as kg"
-        onChangeText={InputPeso => this.setState({InputPeso})} 
-        underlineColorAndroid='transparent'
-        style={styles.TextInputStyle2}
-        keyboardType='numeric'
-        maxLength={2}/>
-
-        <TextInput 
-        placeholder="Enter your Height as cm"
-        onChangeText={InputAltura => this.setState({InputAltura})} 
-        underlineColorAndroid='transparent'
-        style={styles.TextInputStyle}
-        keyboardType='numeric'
-        maxLength={3}/>
-
-        <TextInput 
-        placeholder="Enter your Age"
-        onChangeText={InputEdad => this.setState({InputEdad})} 
-        underlineColorAndroid='transparent'
-        style={styles.TextInputStyle}
-        keyboardType='numeric'
-        maxLength={2}/>
-
-        
-        <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle} onPress={this.InsertDataToServer}>
-          <Text style={styles.TextStyle}>SAVE</Text>
-        </TouchableOpacity>
-        <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle} onPress={this.ViewMeasuresList}>
-          <Text style={styles.TextStyle}>SHOW MEASURES</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-}
 export default App=createStackNavigator({
     First:{screen:InputMeasure},
     Second:{screen:ViewDataMeasure},
-    Thire:{screen:UpdateAndDeleteMeasures}
+    Thire:{screen:UpdateAndDeleteMeasures},
+    Fourth:{screen:MyDiets}
   //<Button title='GUARDAR' onPress={this.InsertDataToServer} color='#2196F3'/>
         
 });
