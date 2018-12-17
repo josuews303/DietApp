@@ -1,5 +1,5 @@
 import React from 'react';
-import { Picker,TouchableOpacity,ActivityIndicator,ListView,Alert,StyleSheet, Text, View,TextInput } from 'react-native';
+import { ImageBackground,Picker,TouchableOpacity,ActivityIndicator,ListView,Alert,StyleSheet, Text, View,TextInput } from 'react-native';
 import { createStackNavigator} from 'react-navigation';
 
 class ViewDataFood extends React.Component{
@@ -45,6 +45,7 @@ class ViewDataFood extends React.Component{
 
   ListViewItemSeparator=()=>{
     return(
+      <ImageBackground source={require('../../img/menu1.jpg')} style={styles.imageContainer}>
       <View
       style = {{
         height:.5,
@@ -52,18 +53,22 @@ class ViewDataFood extends React.Component{
         backgroundColor:'#2196F3'
       }}
       />
+      </ImageBackground>
     )
   }
   
   render(){
     if(this.state.isLoading){
       return(
+        <ImageBackground source={require('../../img/menu1.jpg')} style={styles.imageContainer}>
         <View style={{flex:1,paddingTop:1}}>
           <ActivityIndicator/>
         </View>
+        </ImageBackground>
       )
     }
     return(
+      <ImageBackground source={require('../../img/menu1.jpg')} style={styles.imageContainer}>
       <View style={styles.ContainerDataUsers}>
         <ListView
           dataSource={this.state.dataSource}
@@ -78,6 +83,7 @@ class ViewDataFood extends React.Component{
           <Text style={styles.TextStyle}>Reload List</Text>
         </TouchableOpacity> 
       </View>
+      </ImageBackground>
     )
   }
 }
@@ -168,4 +174,11 @@ const styles = StyleSheet.create({
     color:'white',
     //backgroundColor:'rgba{0,0,0,0}'
   },
+  imageContainer: {
+    flex: 1,
+    backgroundColor: '#F5FCFF',
+    alignItems: 'center',
+    width: '100%', height: '100%'
+    //justifyContent: 'center',
+  }
 });

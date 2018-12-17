@@ -20,7 +20,7 @@ class LoginScreen extends React.Component {
   
   render() {
   return (
-    <ImageBackground source={require('./img/login.jpg')} style={styles.imageContainer}>
+    <ImageBackground source={require('./img/login1.jpg')} style={styles.imageContainer}>
         <View style={styles.container}>
             <Text style={styles.tittle}>Easy Diet</Text>
             <TextInput style={styles.textInput} 
@@ -174,7 +174,7 @@ class LoginScreen extends React.Component {
       },
       tittle:{
         fontSize:30,
-        marginTop:50,
+        marginTop:80,
         color:'white',
         //backgroundColor:'rgba{0,0,0,0}'
       },

@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity,ActivityIndicator,ListView,Alert,Button,StyleSheet, Text, View,AppRegistry,TextInput } from 'react-native';
+import { ImageBackground,TouchableOpacity,ActivityIndicator,ListView,Alert,Button,StyleSheet, Text, View,AppRegistry,TextInput } from 'react-native';
 import { createStackNavigator} from 'react-navigation';
 import DatePicker from 'react-native-datepicker'
 import Login from '../../App.js';
@@ -105,8 +105,9 @@ class InputUsers extends React.Component{
     }
   render() {
     return (
-      
+      <ImageBackground source={require('../../img/register1.jpg')} style={styles.imageContainer}>
       <View style={styles.Container}>
+      <Text style={styles.tittle}>Register</Text>
         <TextInput 
         placeholder="Name"
         onChangeText={InputNombre => this.setState({InputNombre})} 
@@ -162,6 +163,7 @@ class InputUsers extends React.Component{
           <Text style={styles.TextStyle}>SAVE</Text>
         </TouchableOpacity>
       </View>
+      </ImageBackground>
     );
   }
 }
@@ -176,20 +178,27 @@ export default App=createStackNavigator({
 
 const styles = StyleSheet.create({
   Container: {
-    flex: 1,
-    marginTop:5,
-    backgroundColor: '#fff',
+    width:'100%',
+    height:'100%',
     alignItems: 'center',
-    justifyContent: 'center',
-  },DatePicker:{
+  },imageContainer: {
+    flex: 1,
+    backgroundColor: '#F5FCFF',
+    alignItems: 'center',
+    width: '100%', height: '100%'
+    //justifyContent: 'center',
+  },
+  DatePicker:{
     marginBottom:7,
     height:40,
     width:'85%',
     borderWidth:1,
     borderColor:'#2196F3',
-    borderRadius:5
+    borderRadius:5,
+    backgroundColor:'#ffffff'
   },
   TextInputStyle:{
+    backgroundColor:'#ffffff',
     textAlign:'center',
     marginBottom:7,
     height:40,
@@ -199,6 +208,7 @@ const styles = StyleSheet.create({
     borderRadius:5
   },
   TextInputStyle2:{
+    backgroundColor:'#ffffff',
     textAlign:'center',
     marginTop:20,
     marginBottom:7,

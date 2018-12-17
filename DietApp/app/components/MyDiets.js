@@ -1,5 +1,5 @@
 import React from 'react';
-import { Picker,TouchableOpacity,ActivityIndicator,ListView,Alert,StyleSheet, Text, View,TextInput } from 'react-native';
+import { ImageBackground,Picker,TouchableOpacity,ActivityIndicator,ListView,Alert,StyleSheet, Text, View,TextInput } from 'react-native';
 import { createStackNavigator} from 'react-navigation';
 import MyFood from './MyFood';
 
@@ -55,6 +55,7 @@ class ViewDataDiet extends React.Component{
 
   ListViewItemSeparator=()=>{
     return(
+      <ImageBackground source={require('../../img/menu1.jpg')} style={styles.imageContainer}>
       <View
       style = {{
         height:.5,
@@ -62,18 +63,22 @@ class ViewDataDiet extends React.Component{
         backgroundColor:'#2196F3'
       }}
       />
+      </ImageBackground>
     )
   }
   
   render(){
     if(this.state.isLoading){
       return(
+        <ImageBackground source={require('../../img/menu1.jpg')} style={styles.imageContainer}>
         <View style={{flex:1,paddingTop:1}}>
           <ActivityIndicator/>
         </View>
+        </ImageBackground>
       )
     }
     return(
+      <ImageBackground source={require('../../img/menu1.jpg')} style={styles.imageContainer}>
       <View style={styles.ContainerDataUsers}>
         <ListView
           dataSource={this.state.dataSource}
@@ -93,6 +98,7 @@ class ViewDataDiet extends React.Component{
           <Text style={styles.TextStyle}>Reload List</Text>
         </TouchableOpacity> 
       </View>
+      </ImageBackground>
     )
   }
 }
@@ -123,6 +129,7 @@ class UpdateAndDeleteDiet extends React.Component{
   }
   render(){
     return(
+      <ImageBackground source={require('../../img/menu1.jpg')} style={styles.imageContainer}>
       <View style={styles.Container}>
         <TextInput 
         value = {this.state.InputNombre} 
@@ -154,6 +161,7 @@ class UpdateAndDeleteDiet extends React.Component{
           <Text style={styles.TextStyle}>Show Food</Text>
         </TouchableOpacity>
       </View>
+      </ImageBackground>
     )
   }
 }
@@ -170,11 +178,13 @@ const styles = StyleSheet.create({
   Container: {
     flex: 1,
     marginTop:5,
-    backgroundColor: '#fff',
+    width:'100%',
+    height:'100%',
     alignItems: 'center',
     justifyContent: 'center',
   },
   TextInputStyle:{
+    backgroundColor: '#fff',
     textAlign:'center',
     marginBottom:7,
     height:40,
@@ -184,6 +194,7 @@ const styles = StyleSheet.create({
     borderRadius:5
   },
   TextInputStyle2:{
+    backgroundColor: '#fff',
     textAlign:'center',
     marginTop:20,
     marginBottom:7,
@@ -245,4 +256,11 @@ const styles = StyleSheet.create({
     color:'white',
     //backgroundColor:'rgba{0,0,0,0}'
   },
+  imageContainer: {
+    flex: 1,
+    backgroundColor: '#F5FCFF',
+    alignItems: 'center',
+    width: '100%', height: '100%'
+    //justifyContent: 'center',
+  }
 });

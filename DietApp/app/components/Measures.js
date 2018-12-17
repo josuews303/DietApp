@@ -1,6 +1,6 @@
-/////vale verga profe
+
 import React from 'react';
-import { TouchableOpacity,ActivityIndicator,ListView,Alert,Button,StyleSheet, Text, View,AppRegistry,TextInput } from 'react-native';
+import { ImageBackground,TouchableOpacity,ActivityIndicator,ListView,Alert,Button,StyleSheet, Text, View,AppRegistry,TextInput } from 'react-native';
 import { createStackNavigator} from 'react-navigation';
 import MyDiets from "./MyDiets"
 class InputMeasure extends React.Component{
@@ -107,7 +107,7 @@ class InputMeasure extends React.Component{
     }
   render() {
     return (
-      
+      <ImageBackground source={require('../../img/menu1.jpg')} style={styles.imageContainer}>
       <View style={styles.Container}>
         <TextInput 
         placeholder="Enter your Weight as kg"
@@ -141,6 +141,7 @@ class InputMeasure extends React.Component{
           <Text style={styles.TextStyle}>SHOW MEASURES</Text>
         </TouchableOpacity>
       </View>
+      </ImageBackground>
     );
   }
 }
@@ -213,6 +214,7 @@ to_add = () =>{
 
   ListViewItemSeparator=()=>{
     return(
+      <ImageBackground source={require('../../img/menu1.jpg')} style={styles.imageContainer}>
       <View
       style = {{
         height:.5,
@@ -220,18 +222,22 @@ to_add = () =>{
         backgroundColor:'#2196F3'
       }}
       />
+      </ImageBackground>
     )
   }
   
   render(){
     if(this.state.isLoading){
       return(
+        <ImageBackground source={require('../../img/menu1.jpg')} style={styles.imageContainer}>
         <View style={{flex:1,paddingTop:1}}>
           <ActivityIndicator/>
         </View>
+        </ImageBackground>
       )
     }
     return(
+      <ImageBackground source={require('../../img/menu1.jpg')} style={styles.imageContainer}>
       <View style={styles.ContainerDataUsers}>
         <ListView
           dataSource={this.state.dataSource}
@@ -258,6 +264,7 @@ to_add = () =>{
           <Text style={styles.TextStyle}>Reload List</Text>
         </TouchableOpacity> 
       </View>
+      </ImageBackground>
     )
   }
 }
@@ -365,6 +372,7 @@ class UpdateAndDeleteMeasures extends React.Component{
  
   render(){
     return(
+      <ImageBackground source={require('../../img/diet1.jpg')} style={styles.imageContainer}>
       <View style={styles.Container}>
 
         <TextInput 
@@ -403,6 +411,7 @@ class UpdateAndDeleteMeasures extends React.Component{
           <Text style={styles.TextStyle}>Recomended Diet</Text>
         </TouchableOpacity>
       </View>
+      </ImageBackground>
     )
   }
 }
@@ -421,9 +430,18 @@ const styles = StyleSheet.create({
   Container: {
     flex: 1,
     marginTop:5,
-    backgroundColor: '#fff',
+    //backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    width:'100%',
+    height:'100%'
+  },
+  imageContainer: {
+    flex: 1,
+    backgroundColor: '#F5FCFF',
+    alignItems: 'center',
+    width: '100%', height: '100%'
+    //justifyContent: 'center',
   },
   TextInputStyle:{
     textAlign:'center',
@@ -432,9 +450,11 @@ const styles = StyleSheet.create({
     width:'85%',
     borderWidth:1,
     borderColor:'#2196F3',
-    borderRadius:5
+    borderRadius:5,
+    backgroundColor: '#fff',
   },
   TextInputStyle2:{
+    backgroundColor: '#fff',
     textAlign:'center',
     marginTop:20,
     marginBottom:7,

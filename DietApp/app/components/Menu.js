@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity,ActivityIndicator,ListView,Alert,Button,StyleSheet, Text, View,AppRegistry,TextInput } from 'react-native';
+import { ImageBackground,TouchableOpacity,ActivityIndicator,ListView,Alert,Button,StyleSheet, Text, View,AppRegistry,TextInput } from 'react-native';
 import { createStackNavigator} from 'react-navigation';
 import Measure from "./Measures";
 import Diet from "./Diet";
@@ -22,7 +22,7 @@ class MainMenu extends React.Component{
     }
     render() {
       return (
-        
+        <ImageBackground source={require('../../img/menu1.jpg')} style={styles.imageContainer}>
         <View style={styles.Container}>
           <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle} onPress={this.ViewMeasure}>
             <Text style={styles.TextStyle}>MEASURES</Text>
@@ -31,6 +31,7 @@ class MainMenu extends React.Component{
             <Text style={styles.TextStyle}>DIETS</Text>
           </TouchableOpacity>
         </View>
+        </ImageBackground>
       );
     }
   }
@@ -61,9 +62,11 @@ class MainMenu extends React.Component{
     Container: {
       flex: 1,
       marginTop:5,
-      backgroundColor: '#fff',
+      //backgroundColor: '#fff',
       alignItems: 'center',
       justifyContent: 'center',
+      width:'100%',
+      height:'100%'
     },
     TextInputStyle:{
       textAlign:'center',
@@ -135,5 +138,11 @@ class MainMenu extends React.Component{
       marginTop:50,
       color:'white',
       //backgroundColor:'rgba{0,0,0,0}'
-    },
+    },imageContainer: {
+      flex: 1,
+      backgroundColor: '#F5FCFF',
+      alignItems: 'center',
+      width: '100%', height: '100%'
+      //justifyContent: 'center',
+    }
   });
