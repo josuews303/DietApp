@@ -131,32 +131,12 @@ class UpdateAndDeleteDiet extends React.Component{
     return(
       <ImageBackground source={require('../../img/menu1.jpg')} style={styles.imageContainer}>
       <View style={styles.Container}>
-        <TextInput 
-        value = {this.state.InputNombre} 
-        placeholder="Diet Name"
-        onChangeText={InputNombre => this.setState({InputNombre})} 
-        underlineColorAndroid='transparent'
-        style={styles.TextInputStyle2}/>
+      <Text style={styles.TextStyle54}>Dieta:{this.state.InputNombre}</Text>
 
-        <TextInput 
-        value = {this.state.InputDetalle} 
-        placeholder="Diet Detail"
-        onChangeText={InputDetalle => this.setState({InputDetalle})} 
-        underlineColorAndroid='transparent'
-        style={styles.TextInputStyle}/>
+      <Text style={styles.TextStyle54}>Detalle:{this.state.InputDetalle}</Text>
+  
+      <Text style={styles.TextStyle54}>Grado:{this.state.InputGrado}</Text>
 
-        <Picker
-            value = {this.state.InputGrado} 
-            placeholder="IMC"
-            selectedValue={this.state.InputGrado}
-            style={{ height: 50, width: 100 }}
-            onValueChange={(itemValue, itemIndex) => this.setState({InputGrado: itemValue})}>
-            <Picker.Item label="Desnutrición" value="Desnutrido" />
-            <Picker.Item label="Sobrepeso " value="Sobrepeso" />
-            <Picker.Item label="Obesidad Grado 1" value="Obesidad Grado 1" />
-            <Picker.Item label="Obesidad Grado 2" value="Obesidad Grado 2" />
-            <Picker.Item label="Obesidad Grado 2" value="Obesidad Grado 2" />
-        </Picker>
         <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle} onPress={this.AddFood}>
           <Text style={styles.TextStyle}>Show Food</Text>
         </TouchableOpacity>
@@ -207,6 +187,14 @@ const styles = StyleSheet.create({
   TextStyle:{
     color:'#fff',
     textAlign:'center',
+
+  },
+  TextStyle54:{
+    color:'#000',
+    textAlign:'center',
+    backgroundColor:'#fff',
+    margin: 10,
+    fontSize:20,
 
   },
   TouchableOpacityStyle:{

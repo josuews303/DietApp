@@ -18,6 +18,10 @@ class InputDiet extends React.Component{
     }
 
     InsertDataToServer = () =>{
+      if(!this.state.InputNombre || !this.state.InputDetalle ){
+        Alert.alert('Error','Asegurese de ingresar bien los datos');
+      }
+      else{
         const {InputNombre} =this.state;
         const {InputDetalle} =this.state;
         const {InputGrado} =this.state;
@@ -41,6 +45,7 @@ class InputDiet extends React.Component{
         }).catch((error)=>{
           console.error(error);
         });
+      }
         
     }
   ViewUsersList=()=>{
@@ -200,7 +205,9 @@ AddFood=()=>{
   this.props.navigation.navigate('Fourth',{InputId:this.state.InputId})
 }
   UpdateUsers=()=>{
-
+    if(!this.state.InputNombre || !this.state.InputDetalle ){
+      Alert.alert('Error','Asegurese de ingresar bien los datos');
+    }else{
       fetch('http://weaweawea.atwebpages.com/updateDiet.php',{
         method: 'POST',
         headers:{
@@ -221,6 +228,7 @@ AddFood=()=>{
         console.error(error);
       })
       this.props.navigation.navigate('Second')
+    }
     
   }
   DeleteUsers=()=>{
@@ -362,7 +370,9 @@ const styles = StyleSheet.create({
     flex:1,
     paddingTop:20,
     marginLeft:5,
-    marginRight:5
+    marginRight:5,
+    alignItems: 'center',
+    width:'100%'
   },
   rowViewContainer:{
     textAlign:'center',

@@ -19,6 +19,9 @@ class InputFood extends React.Component{
     }
 
     InsertDataToServer = () =>{
+      if(!this.state.InputNombre || !this.state.InputPrecio || !this.state.InputNumero ){
+        Alert.alert('Error','Asegurese de ingresar bien los datos');
+      }else{
         console.log(this.state.InputDiet)
         console.log(this.state.InputNumero)
         const {InputNombre} =this.state;
@@ -59,6 +62,7 @@ class InputFood extends React.Component{
         }).catch((error)=>{
           console.error(error);
         });
+      }
         
     }
   ViewUsersList=()=>{
@@ -238,46 +242,49 @@ class UpdateAndDeleteFood extends React.Component{
     })
   }
   UpdateUsers=()=>{
+    if(!this.state.InputNombre || !this.state.InputPrecio || !this.state.InputNumero ){
+      Alert.alert('Error','Asegurese de ingresar bien los datos');
+    }else{
+      const {InputNumero} =this.state;
 
-    const {InputNumero} =this.state;
-
-        switch(this.state.InputNumero){
-            case "0":
-            console.log("Entro al 1")
-                this.state.InputOrden="Primera Comida"
-                break;
-            case "1":
-                console.log("Entro al 2")
-                this.state.InputOrden="Segunda Comida"
-                break;
-            case "2":
-            console.log("Entro al 3")
-                this.state.InputOrden="Tercera Comida"
-                break;
-        }
-      fetch('http://weaweawea.atwebpages.com/updateFood.php',{
-        method: 'POST',
-        headers:{
-          'Accept':'application/json',
-          'Content-Type':'application/json'
-        },
-        body:JSON.stringify({
-          id_comida:this.state.InputId,
-          nombre_comida:this.state.InputNombre,
-          porcion_comida:this.state.InputPorcion,
-          orden_comida: this.state.InputOrden,
-          numero_comida:this.state.InputNumero,
-          id_dieta:this.state.InputDiet
-        })
-      }).then((response)=>response.json())
-      .then((responseJson)=> {
-        Alert.alert(responseJson);
-        this.props.navigation.navigate('Second',{InputDiet:this.state.InputDiet});
-      }).catch((error)=> {
-        console.error(error);
+      switch(this.state.InputNumero){
+          case "0":
+          console.log("Entro al 1")
+              this.state.InputOrden="Primera Comida"
+              break;
+          case "1":
+              console.log("Entro al 2")
+              this.state.InputOrden="Segunda Comida"
+              break;
+          case "2":
+          console.log("Entro al 3")
+              this.state.InputOrden="Tercera Comida"
+              break;
+      }
+    fetch('http://weaweawea.atwebpages.com/updateFood.php',{
+      method: 'POST',
+      headers:{
+        'Accept':'application/json',
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({
+        id_comida:this.state.InputId,
+        nombre_comida:this.state.InputNombre,
+        porcion_comida:this.state.InputPorcion,
+        orden_comida: this.state.InputOrden,
+        numero_comida:this.state.InputNumero,
+        id_dieta:this.state.InputDiet
       })
-      this.props.navigation.navigate('Second',{InputDiet:this.state.InputDiet})
-    
+    }).then((response)=>response.json())
+    .then((responseJson)=> {
+      Alert.alert(responseJson);
+      this.props.navigation.navigate('Second',{InputDiet:this.state.InputDiet});
+    }).catch((error)=> {
+      console.error(error);
+    })
+    this.props.navigation.navigate('Second',{InputDiet:this.state.InputDiet})
+
+    }    
   }
   DeleteUsers=()=>{
     fetch('http://weaweawea.atwebpages.com/deleteFood.php',{
@@ -413,7 +420,9 @@ const styles = StyleSheet.create({
     flex:1,
     paddingTop:20,
     marginLeft:5,
-    marginRight:5
+    marginRight:5,
+    alignItems: 'center',
+    width:'100%'
   },
   rowViewContainer:{
     textAlign:'center',

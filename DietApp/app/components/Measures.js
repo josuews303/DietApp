@@ -3,6 +3,7 @@ import React from 'react';
 import { ImageBackground,TouchableOpacity,ActivityIndicator,ListView,Alert,Button,StyleSheet, Text, View,AppRegistry,TextInput } from 'react-native';
 import { createStackNavigator} from 'react-navigation';
 import MyDiets from "./MyDiets"
+
 class InputMeasure extends React.Component{
   static navigationOptions={
     title:'New Measure'
@@ -24,7 +25,10 @@ class InputMeasure extends React.Component{
 
     InsertDataToServer = () =>{
       
-      if(this.state.mailvalidate==false){
+      if(!this.state.InputEdad || !this.state.InputPeso || !this.state.InputAltura){
+        Alert.alert('Error','Asegurese de ingresar bien los datos');
+        
+      }else{
         const {date} =this.state;
         const {InputEdad} =this.state;
         const {InputPeso} =this.state;
@@ -81,8 +85,6 @@ class InputMeasure extends React.Component{
           console.error(error);
         });
         this.props.navigation.navigate('Second',{id_usuario:this.state.id_usuario});
-      }else{
-        Alert.alert('Error','Asegurese de ingresar bien los datos');
       }
         
     }
@@ -143,6 +145,112 @@ class InputMeasure extends React.Component{
       </View>
       </ImageBackground>
     );
+  }
+}
+class Historial extends React.Component{
+  static navigationOptions = {
+    title:'Historial'
+}
+
+  constructor(props){
+    super(props)
+    this.state = {
+      isLoading:true,
+      id_usuario:this.props.navigation.state.params.id_usuario,
+    }
+  }
+
+  componentDidMount(){
+    try {
+      return fetch('http://weaweawea.atwebpages.com/viewHistorial.php', {
+        method: 'POST',
+        headers: {
+         'Accept': 'application/json',
+         'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+        
+         nick_usuario: this.state.id_usuario
+        
+        })
+        
+        })
+            .then((response)=>response.json())
+            .then((responseJson)=>{
+              let ds =  new ListView.DataSource({rowHasChanged:(r1,r2)=> r1!==r2})
+              this.setState({
+                isLoading:false,
+                dataSource: ds.cloneWithRows(responseJson)
+              },function(){})
+            }).catch((error)=>{
+              console.error(error);
+            })
+    } catch (error) {
+        console.error(error);
+    }
+
+    
+  }
+  reload = () => 
+{
+    //RELOAD COMPONENT
+    this.componentDidMount();
+};
+to_add = () =>{
+  this.props.navigation.navigate('First',{id_usuario:this.state.id_usuario});
+}
+historial = () =>{
+  this.props.navigation.navigate('Thire',{id_usuario:this.state.id_usuario});
+}
+
+  ListViewItemSeparator=()=>{
+    return(
+      <ImageBackground source={require('../../img/menu1.jpg')} style={styles.imageContainer}>
+      <View
+      style = {{
+        height:.5,
+        width:'100%',
+        backgroundColor:'#2196F3'
+      }}
+      />
+      </ImageBackground>
+    )
+  }
+  
+  render(){
+    if(this.state.isLoading){
+      return(
+        <ImageBackground source={require('../../img/menu1.jpg')} style={styles.imageContainer}>
+        <View style={{flex:1,paddingTop:1}}>
+          <ActivityIndicator/>
+        </View>
+        </ImageBackground>
+      )
+    }
+    return(
+      <ImageBackground source={require('../../img/menu1.jpg')} style={styles.imageContainer}>
+      <View style={styles.ContainerDataUsers}>
+        <ListView
+          dataSource={this.state.dataSource}
+          renderSeparator={this.ListViewItemSeparator}
+          renderRow={(rowData)=>
+            <Text style={styles.rowViewContainer}>
+              Esta es tu medida:{rowData.imc_medida}, estas {rowData.detalle_medida}
+            </Text>
+          }
+        />
+        <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle3} onPress={this.to_add}>
+          <Text style={styles.TextStyle}>Add Measure</Text>
+        </TouchableOpacity> 
+        <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle3} onPress={this.reload}>
+          <Text style={styles.TextStyle}>Reload List</Text>
+        </TouchableOpacity> 
+        <TouchableOpacity activeOpacity={.4} style={styles.TouchableOpacityStyle3} onPress={this.historial}>
+          <Text style={styles.TextStyle}>HISTORIAL</Text>
+        </TouchableOpacity>
+      </View>
+      </ImageBackground>
+    )
   }
 }
 class ViewDataMeasure extends React.Component{
@@ -300,10 +408,13 @@ class UpdateAndDeleteMeasures extends React.Component{
     })
   }
   goDiets=()=>{
-    this.props.navigation.navigate('Fourth',{grado_dieta:this.state.detalle_medida});
+    this.props.navigation.navigate('Fifth',{grado_dieta:this.state.detalle_medida});
   }
   ////////////Update Measure/////
   UpdateMeasure=()=>{
+    if(!this.state.InputEdad || !this.state.InputPeso || !this.state.InputAltura){
+      Alert.alert('Error','Asegurese de ingresar bien los datos');
+    }else{
       imc_cal=(this.state.peso_medida/((this.state.altura_medida/100)*(this.state.altura_medida/100)));
        if(imc_cal< 18){
           detalle_medida='Desnutrido';
@@ -349,6 +460,8 @@ class UpdateAndDeleteMeasures extends React.Component{
       })
       this.props.navigation.navigate('Second',{id_usuario:this.state.id_usuario});
     }
+    }
+      
     //////////////////Delete Measure/////////
   DeleteMeasure=()=>{
     fetch('http://weaweawea.atwebpages.com/deleteMeasure.php',{
@@ -418,9 +531,10 @@ class UpdateAndDeleteMeasures extends React.Component{
 
 export default App=createStackNavigator({
     First:{screen:InputMeasure},
-    Second:{screen:ViewDataMeasure},
-    Thire:{screen:UpdateAndDeleteMeasures},
-    Fourth:{screen:MyDiets}
+    Second:{screen:Historial},
+    Thire:{screen:ViewDataMeasure},
+    Fourth:{screen:UpdateAndDeleteMeasures},
+    Fifth:{screen:MyDiets}
   //<Button title='GUARDAR' onPress={this.InsertDataToServer} color='#2196F3'/>
         
 });
@@ -500,7 +614,9 @@ const styles = StyleSheet.create({
     flex:1,
     paddingTop:20,
     marginLeft:5,
-    marginRight:5
+    marginRight:5,
+    alignItems: 'center',
+    width:'100%'
   },
   rowViewContainer:{
     textAlign:'center',
